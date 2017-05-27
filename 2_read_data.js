@@ -9,7 +9,7 @@ var HEART_RATE_SERVICE_UUID = "180d";
 var fs = require('fs');
 var startTime = new Date();
 var averageHeartRate, prevAverageHeartRate;
-var AUDIO_QUEUE_PERIOD = 60; // sec
+var AUDIO_CUE_PERIOD = process.env.AUDIO_CUE_PERIOD || 60;
 var lastPeriodHeartRates = [];
 
 noble.on("stateChange", function(state) {
@@ -55,11 +55,12 @@ noble.on("discover", function (peripheral) {
             heartRateCharacteristic.on("data", function(data, isNotification) {
               var heartRate = data.readUInt8(1);
               var timestamp = Math.floor((new Date() - startTime) / 1000);
+              console.log(timestamp + ": " + heartRate);
 
               lastPeriodHeartRates.push(heartRate);
               logHeartRate(heartRate, timestamp);
 
-              if(timestamp % AUDIO_QUEUE_PERIOD === 0) {
+              if(timestamp % AUDIO_CUE_PERIOD === 0) {
                 audioCue();
               }
             });
