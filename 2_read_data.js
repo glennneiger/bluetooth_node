@@ -9,8 +9,8 @@ var HEART_RATE_SERVICE_UUID = "180d";
 var fs = require('fs');
 var startTime = new Date();
 var averageHeartRate, prevAverageHeartRate;
-var lastMinuteHeartRates = [];
 var AUDIO_QUEUE_PERIOD = 60; // sec
+var lastPeriodHeartRates = [];
 
 noble.on("stateChange", function(state) {
   if (state === "poweredOn") {
@@ -54,8 +54,9 @@ noble.on("discover", function (peripheral) {
 
             heartRateCharacteristic.on("data", function(data, isNotification) {
               var heartRate = data.readUInt8(1);
-              lastMinuteHeartRates.push(heartRate);
               var timestamp = Math.floor((new Date() - startTime) / 1000);
+
+              lastPeriodHeartRates.push(heartRate);
               logHeartRate(heartRate, timestamp);
 
               if(timestamp % AUDIO_QUEUE_PERIOD === 0) {
@@ -70,8 +71,9 @@ noble.on("discover", function (peripheral) {
 });
 
 function audioCue() {
-  var averageHeartRate = lastMinuteHeartRates.reduce(function(p,c,i,a){return p + (c/a.length)},0).toFixed();
-  lastMinuteHeartRates = [];
+  var averageHeartRate = lastPeriodHeartRates.reduce(function(p,c,i,a){return p + (c/a.length)},0).toFixed();
+
+  lastPeriodHeartRates = [];
 
   if(prevAverageHeartRate) {
     var relativeChange = (averageHeartRate - prevAverageHeartRate) * 100 / averageHeartRate;
