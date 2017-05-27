@@ -7,8 +7,9 @@ This is a test project to:
 
 ## How to use
 
-1. Run `node 1_scan_uuid.js` to get UUID of your sensor.
-2. Run `TICKR_UUID=uuid AUDIO_CUE_PERIOD=60 node 2_read_data.js` to read heart rate values.
+1. Run `npm install`. [noble](https://github.com/sandeepmistry/noble) is the only dependancy to read heart rate data from Bluetooth sensor
+2. Run `node 1_scan_uuid.js` to get UUID of your sensor.
+3. Run `TICKR_UUID=uuid AUDIO_CUE_PERIOD=60 node 2_read_data.js` to read heart rate values.
 
 ## Check out your last session heart rate report
 

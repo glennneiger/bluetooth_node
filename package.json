@@ -1,0 +1,30 @@
+{
+  "name": "bluetooth_node",
+  "version": "1.0.0",
+  "description": "Audio cues for meditation using Node.js and Bluetooth Heart Rate sensor",
+  "main": "1_scan_uuid.js",
+  "dependencies": {
+    "events": "^1.1.1",
+    "noble": "^1.8.1",
+    "noble-device": "^1.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node 1_scan_uuid.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/makaroni4/bluetooth_node.git"
+  },
+  "keywords": [
+    "bluetooth",
+    "node",
+    "heart rate"
+  ],
+  "author": "Anatoli Makarevich",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/makaroni4/bluetooth_node/issues"
+  },
+  "homepage": "https://github.com/makaroni4/bluetooth_node#readme"
+}
