@@ -12,4 +12,4 @@ This is a test project to:
 
 ## Check out your last session heart rate report
 
-![heart rate vs time](https://cloud.githubusercontent.com/assets/768070/26522758/f4d508b8-4307-11e7-8764-ce1392c8e8d1.png | width=600)
+<img src="https://cloud.githubusercontent.com/assets/768070/26522758/f4d508b8-4307-11e7-8764-ce1392c8e8d1.png" width="600px" alt="Heart rate vs time using Node.js and Bluetooth Pule Sensor TICKR">
