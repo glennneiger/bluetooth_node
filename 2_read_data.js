@@ -6,6 +6,11 @@ var allowDuplicates = false;
 var HR_CHARACTERISTIC_HEARTRATE_UUID = "2a37";
 // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.service.heart_rate.xml&u=org.bluetooth.service.heart_rate.xml
 var HEART_RATE_SERVICE_UUID = "180d";
+var fs = require('fs');
+var startTime = new Date();
+var averageHeartRate, prevAverageHeartRate;
+var lastMinuteHeartRates = [];
+var AUDIO_QUEUE_PERIOD = 60; // sec
 
 noble.on("stateChange", function(state) {
   if (state === "poweredOn") {
@@ -48,7 +53,14 @@ noble.on("discover", function (peripheral) {
             });
 
             heartRateCharacteristic.on("data", function(data, isNotification) {
-              console.log(data.readUInt8(1));
+              var heartRate = data.readUInt8(1);
+              lastMinuteHeartRates.push(heartRate);
+              var timestamp = Math.floor((new Date() - startTime) / 1000);
+              logHeartRate(heartRate, timestamp);
+
+              if(timestamp % AUDIO_QUEUE_PERIOD === 0) {
+                audioCue();
+              }
             });
           });
         }
@@ -57,16 +69,46 @@ noble.on("discover", function (peripheral) {
   }
 });
 
+function audioCue() {
+  var averageHeartRate = lastMinuteHeartRates.reduce(function(p,c,i,a){return p + (c/a.length)},0).toFixed();
+  lastMinuteHeartRates = [];
+
+  if(prevAverageHeartRate) {
+    var relativeChange = (averageHeartRate - prevAverageHeartRate) * 100 / averageHeartRate;
+    relativeChange = relativeChange.toFixed();
+
+    if(relativeChange > 0) {
+      runCmd("say pulse got higher by " + Math.abs(relativeChange) + " percent and now is " + averageHeartRate);
+    } else if(relativeChange < 0) {
+      runCmd("say pulse got lower by " + Math.abs(relativeChange) + " percent and now is " + averageHeartRate);
+    } else {
+      runCmd("say pulse is same and now is " + averageHeartRate);
+    }
+  } else {
+    prevAverageHeartRate = averageHeartRate;
+  }
+}
+
+function logHeartRate(heartRate, timestamp) {
+  var dataRow = timestamp + ";" + heartRate + "\n";
+
+  fs.appendFile("hr_log.txt", dataRow, function (error) {
+    if (error) {
+      console.log(error);
+    }
+  });
+}
+
 function runCmd(cmd) {
   require('child_process').execSync(cmd, function puts(error, stdout, stderr) {
   });
 }
 
-function exitHandler(options, err) {
+function exitHandler(err) {
   runCmd("say shutting down");
 
   if(err) {
-    console.log(err.stack);
+    console.log(err);
   }
 
   process.exit();
