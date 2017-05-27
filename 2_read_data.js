@@ -56,3 +56,21 @@ noble.on("discover", function (peripheral) {
     });
   }
 });
+
+function runCmd(cmd) {
+  require('child_process').execSync(cmd, function puts(error, stdout, stderr) {
+  });
+}
+
+function exitHandler(options, err) {
+  runCmd("say shutting down");
+
+  if(err) {
+    console.log(err.stack);
+  }
+
+  process.exit();
+}
+
+process.on('SIGINT', exitHandler);
+process.on('uncaughtException', exitHandler);
