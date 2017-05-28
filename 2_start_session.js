@@ -12,6 +12,12 @@ var averageHeartRate, prevAverageHeartRate;
 var AUDIO_CUE_PERIOD = process.env.AUDIO_CUE_PERIOD || 60;
 var lastPeriodHeartRates = [];
 
+var sessionLogsDir = "session_logs";
+var sessionFileName = sessionLogsDir + "/" + new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') + ".txt";
+if (!fs.existsSync(sessionLogsDir)){
+  fs.mkdirSync(sessionLogsDir);
+}
+
 noble.on("stateChange", function(state) {
   if (state === "poweredOn") {
     noble.startScanning();
@@ -95,7 +101,7 @@ function audioCue() {
 function logHeartRate(heartRate, timestamp) {
   var dataRow = timestamp + ";" + heartRate + "\n";
 
-  fs.appendFile("hr_log.txt", dataRow, function (error) {
+  fs.appendFile(sessionFileName, dataRow, function (error) {
     if (error) {
       console.log(error);
     }
