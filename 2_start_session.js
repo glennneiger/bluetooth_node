@@ -87,15 +87,15 @@ function audioCue() {
     relativeChange = relativeChange.toFixed();
 
     if(relativeChange > 0) {
-      runCmd("say pulse got higher by " + Math.abs(relativeChange) + " percent and now is " + averageHeartRate);
+      runCmd("say plus " + Math.abs(relativeChange));
     } else if(relativeChange < 0) {
-      runCmd("say pulse got lower by " + Math.abs(relativeChange) + " percent and now is " + averageHeartRate);
+      runCmd("say minus " + Math.abs(relativeChange));
     } else {
-      runCmd("say pulse is same and now is " + averageHeartRate);
+      runCmd("say same");
     }
-  } else {
-    prevAverageHeartRate = averageHeartRate;
   }
+
+  prevAverageHeartRate = averageHeartRate;
 }
 
 function logHeartRate(heartRate, timestamp) {
